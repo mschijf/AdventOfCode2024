@@ -4,10 +4,10 @@ fun main() {
     Day03(test=false).showResult()
 }
 
-class Day03(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="TBD", hasInputFile = true) {
+class Day03(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Mull It Over", hasInputFile = true) {
 
     override fun resultPartOne(): Any {
-        val regex = Regex("mul\\([0-9]{1,3},[0-9]{1,3}\\)")
+        val regex = Regex("""mul\(\d{1,3},\d{1,3}\)""")
         val commandList = inputLines
             .flatMap{ line -> regex.findAll(line).toList().map { it.value } }
 
@@ -16,7 +16,7 @@ class Day03(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="TBD", hasInp
     }
 
     override fun resultPartTwo(): Any {
-        val regex = Regex("do\\(\\)|don't\\(\\)|mul\\([0-9]{1,3},[0-9]{1,3}\\)")
+        val regex = Regex("""do\(\)|don't\(\)|mul\(\d{1,3},\d{1,3}\)""")
         val commandList = inputLines(testFile = "example2")
             .flatMap{ line -> regex.findAll(line).toList().map { it.value } }
 

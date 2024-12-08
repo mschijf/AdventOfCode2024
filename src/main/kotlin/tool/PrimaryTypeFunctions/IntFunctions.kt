@@ -41,10 +41,10 @@ fun Int.pow(power: Int):Long {
     return base
 }
 
-fun Int.log10(): Int = this.toLong().log10().toInt()
-fun Long.log10(): Long {
+fun Int.log10(): Int = this.toLong().log10()
+fun Long.log10(): Int {
     var base = this
-    var c = -1L
+    var c = -1
     while (base > 0L) {
         base /= 10
         c++

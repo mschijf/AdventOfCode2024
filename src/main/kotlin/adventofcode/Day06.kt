@@ -15,6 +15,9 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
     private val guardPos = grid.filter { it.value in "^<>v" }.keys.first()
     private val guardDir = Direction.ofSymbol(grid[guardPos]!!.toString())
 
+    private val maxX = allFields.maxOf{ it.x }
+    private val maxY = allFields.maxOf{ it.y }
+
     override fun resultPartOne(): Any {
         return doTheWalk()
     }
@@ -25,10 +28,10 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
     }
 
     private fun doTheWalk(): Int {
-        var visited = mutableSetOf<Point>(guardPos)
+        val visited = mutableSetOf<Point>(guardPos)
         var currentPos = guardPos
         var currentDirection = guardDir
-        while (currentPos in allFields) {
+        while (currentPos.onGrid()) {
             if (currentPos.moveOneStep(currentDirection) in obstructions) {
                 currentDirection = currentDirection.rotateRight()
             } else {
@@ -40,10 +43,12 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
     }
 
     private fun hasCyclicWalk(extraObstruction: Point): Boolean {
-        var visited = mutableSetOf<Pair<Point, Direction>>(Pair(guardPos, guardDir))
+        val visited = mutableSetOf<Pair<Point, Direction>>()
         var currentPos = guardPos
         var currentDirection = guardDir
-        while (currentPos in allFields) {
+        do  {
+            visited += Pair(currentPos, currentDirection)
+
             val possibleNextPos = currentPos.moveOneStep(currentDirection)
             if (possibleNextPos in obstructions || possibleNextPos == extraObstruction) {
                 currentDirection = currentDirection.rotateRight()
@@ -53,9 +58,12 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
             if (Pair(currentPos, currentDirection) in visited) {
                 return true
             }
-            visited += Pair(currentPos, currentDirection)
-        }
+        } while (currentPos.onGrid())
         return false
+    }
+
+    private fun Point.onGrid(): Boolean {
+        return this.x in 0..maxX && this.y in 0..maxY
     }
 }
 

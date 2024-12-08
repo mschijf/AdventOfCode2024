@@ -35,6 +35,17 @@ abstract class PuzzleSolverAbstract (
         println("==================================================================")
     }
 
+    fun showResultTimeOnly() {
+        print(" ${dayOfMonth.toString().padStart(2, ' ')} ${puzzleName.padEnd(30, ' ')}: ")
+        val timePassed1 = getResultTimeOnly() { resultPartOne() }
+        val timePassed2 = getResultTimeOnly() { resultPartTwo() }
+
+        print("%d.%03d sec, ".format(timePassed1 / 1000, timePassed1 % 1000))
+        print("%d.%03d sec".format(timePassed2 / 1000, timePassed2 % 1000))
+        println()
+    }
+
+
     private fun printResult(puzzlePart: Int, getResult: () -> String ) {
         val startTime = System.currentTimeMillis()
         val result = getResult()
@@ -42,6 +53,14 @@ abstract class PuzzleSolverAbstract (
         print("Result part $puzzlePart: $result (after %d.%03d sec)".format(timePassed / 1000, timePassed % 1000))
         println()
     }
+
+    private fun getResultTimeOnly(getResult: () -> Any ): Long {
+        val startTime = System.currentTimeMillis()
+        getResult()
+        val timePassed = System.currentTimeMillis() - startTime
+        return timePassed
+    }
+
 
     private fun getDayOfMonthFromSubClassName(): Int {
         val className = this.javaClass.name.lowercase()

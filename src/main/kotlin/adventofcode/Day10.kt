@@ -62,20 +62,4 @@ class Day10(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Hoof It", ha
         }
         return count
     }
-
 }
-
-
-//
-//        if (topoMap[fromPoint]!! == 9) {
-//            return 1
-//        }
-//
-//        val level = topoMap[fromPoint]!!
-//        return fromPoint
-//            .neighbors()
-//            .filter{ nb -> topoMap.getOrDefault(nb, -1)  == level+1 }
-//            .filter { nb -> nb !in visited }
-//            .sumOf { nb -> countFrom(nb, visited+nb) }
-
-

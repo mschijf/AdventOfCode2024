@@ -1,8 +1,11 @@
 package adventofcode
 
 import tool.coordinate.twodimensional.Point
+import tool.coordinate.twodimensional.real.Coordinate
+import tool.coordinate.twodimensional.real.Line
 import tool.coordinate.twodimensional.xyCoordinate
 import tool.mylambdas.splitByCondition
+import tool.primarytype.isCloseToLong
 import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
 
@@ -21,10 +24,7 @@ class Day13(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Claw Contrap
         return clawMachineList.sumOf{it.calculateCosts()}
     }
 
-    //11 en 12
     override fun resultPartTwo(): Any {
-//        clawMachineList[11].calculateCosts()
-//        return clawMachineList[11].calculateByIntersectionPoint(costA, costB)
         val clawMachineList = inputLines.splitByCondition { it.isBlank() }.map{ ClawMachine.of(it)}
         return clawMachineList.sumOf{it.calculateByIntersectionPoint(costA, costB, extra=10000000000000)}
     }
@@ -35,7 +35,6 @@ class Day13(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Claw Contrap
                 Pair (a*costA + b*costB, a*this.buttonA + b*this.buttonB)
             }
         }
-//        println(grid.filter { it.second == this.prize }.minByOrNull { it.first } )
         return grid.filter { it.second == this.prize }.minOfOrNull { it.first } ?:0
     }
 
@@ -70,17 +69,10 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
     }
 
     fun calculateByIntersectionPoint(costA: Int, costB: Int, extra: Long): Long {
-        val ax = this.buttonA.x.toDouble()
-        val ay = this.buttonA.y.toDouble()
-        val bx = this.buttonB.x.toDouble()
-        val by = this.buttonB.y.toDouble()
-        val px = this.prize.x.toDouble()+extra
-        val py = this.prize.y.toDouble()+extra
+        val line1 = Line(buttonA.x.toDouble(), buttonB.x.toDouble(), prize.x.toDouble()+extra)
+        val line2 = Line(buttonA.y.toDouble(), buttonB.y.toDouble(), prize.y.toDouble()+extra)
+        val (aPushes, bPushes) = line1.intersectionOrNull(line2)?: return 0
 
-        val bPushes = ( px - py*(ax/ay) ) / ( bx - by*(ax/ay) )
-        val aPushes = ( px - bPushes*bx ) / ax
-
-//        println("$aPushes  $bPushes")
         return if (aPushes.isCloseToLong() && bPushes.isCloseToLong()) {
             aPushes.roundToLong()*costA + bPushes.roundToLong() * costB
         } else {
@@ -88,10 +80,6 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
         }
     }
 
-    private fun Double.isCloseToLong(tolerance: Double = 0.0001): Boolean {
-        val nearestLong = this.roundToLong()
-        return (this - nearestLong).absoluteValue <= tolerance
-    }
-
 }
+
 

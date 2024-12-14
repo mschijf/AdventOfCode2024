@@ -1,6 +1,6 @@
 package adventofcode
 
-import tool.PrimaryTypeFunctions.digitLength
+import tool.primarytype.digitLength
 
 fun main() {
     Day11(test=false).showResult()

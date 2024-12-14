@@ -1,6 +1,6 @@
 package tool.coordinate.twodimensional
 
-import tool.PrimaryTypeFunctions.overlaps
+import tool.primarytype.overlaps
 import kotlin.math.max
 import kotlin.math.min
 
@@ -23,7 +23,7 @@ data class Rectangle(val p1: Point, val p2: Point) {
     fun bottomRight(): Point = pos(maxX, maxY)
 
     fun area() : Long {
-        return Line(topLeft(), topRight()).length().toLong() * Line(topRight(), bottomRight()).length()
+        return IntLine(topLeft(), topRight()).length().toLong() * IntLine(topRight(), bottomRight()).length()
     }
 
 }

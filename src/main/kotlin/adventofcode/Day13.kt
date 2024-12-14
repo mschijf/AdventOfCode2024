@@ -4,7 +4,7 @@ import tool.coordinate.twodimensional.Point
 import tool.coordinate.twodimensional.pos
 import tool.coordinate.real.Line
 import tool.mylambdas.splitByCondition
-import tool.primarytype.isCloseToLong
+import tool.primarytype.isLong
 import kotlin.math.roundToLong
 
 fun main() {
@@ -67,12 +67,13 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
     }
 
     fun calculateByIntersectionPoint(costA: Int, costB: Int, extra: Long): Long {
-        val line1 = Line.of(buttonA.x.toDouble(), buttonB.x.toDouble(), prize.x.toDouble() + extra)
-        val line2 = Line.of(buttonA.y.toDouble(), buttonB.y.toDouble(), prize.y.toDouble() + extra)
+        val line1 = Line.of(buttonA.x.toDouble(), buttonB.x.toDouble(), prize.x.toDouble() + extra )
+        val line2 = Line.of(buttonA.y.toDouble(), buttonB.y.toDouble(), prize.y.toDouble() + extra )
         val (aPushes, bPushes) = line1.intersectionPoint(line2)
 
-        return if (aPushes.isCloseToLong(tolerance=0.001) && bPushes.isCloseToLong(tolerance=0.001)) {
-            aPushes.roundToLong()*costA + bPushes.roundToLong() * costB
+        val tolerance = 0.001
+        return if (aPushes.isLong(tolerance) && bPushes.isLong(tolerance)) {
+            aPushes.roundToLong() * costA + bPushes.roundToLong() * costB
         } else {
             0
         }

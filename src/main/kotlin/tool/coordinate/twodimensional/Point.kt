@@ -103,14 +103,14 @@ data class Point private constructor(
         }
 
     companion object {
-        fun of(gridOrientation: Boolean, input: String): Point = XYPair.fromString(input).run { Point(gridOrientation, this.x, this.y) }
+        fun of(gridOrientation: Boolean, input: String): Point = XYPair.of(input).run { Point(gridOrientation, this.x, this.y) }
         fun of(gridOrientation: Boolean, x: Int, y: Int) = Point(gridOrientation, x, y)
     }
 }
 
-data class XYPair(val x: Int, val y: Int) {
+private data class XYPair(val x: Int, val y: Int) {
     companion object {
-        fun fromString(input: String) = input
+        fun of(input: String) = input
             .removeSurrounding("<", ">")
             .removeSurrounding("(", ")")
             .removeSurrounding("[", "]")

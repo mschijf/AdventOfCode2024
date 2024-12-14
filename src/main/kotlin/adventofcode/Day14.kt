@@ -1,6 +1,7 @@
 package adventofcode
 
 import tool.coordinate.twodimensional.Point
+import tool.coordinate.twodimensional.pos
 import tool.coordinate.twodimensional.printAsGrid
 import kotlin.math.max
 
@@ -102,14 +103,14 @@ data class Robot(var pos: Point, val speed: Point) {
     companion object {
         fun of(line: String): Robot {
             return Robot(
-                pos = Point.of(true, line.substringAfter("p=").substringBefore(" ")),
-                speed=Point.of(true, line.substringAfter("v="))
+                pos = pos(line.substringAfter("p=").substringBefore(" ")),
+                speed=pos(line.substringAfter("v="))
             )
         }
     }
 
     fun move(maxX: Int, maxY: Int) {
-        pos = Point.of(true, (pos.x+speed.x).mod(maxX), (pos.y+speed.y).mod(maxY) )
+        pos = pos( (pos.x+speed.x).mod(maxX), (pos.y+speed.y).mod(maxY) )
     }
 }
 

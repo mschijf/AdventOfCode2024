@@ -1,12 +1,10 @@
 package adventofcode
 
 import tool.coordinate.twodimensional.Point
-import tool.coordinate.twodimensional.real.Coordinate
+import tool.coordinate.twodimensional.pos
 import tool.coordinate.twodimensional.real.Line
-import tool.coordinate.twodimensional.xyCoordinate
 import tool.mylambdas.splitByCondition
 import tool.primarytype.isCloseToLong
-import kotlin.math.absoluteValue
 import kotlin.math.roundToLong
 
 fun main() {
@@ -39,7 +37,7 @@ class Day13(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Claw Contrap
     }
 
     operator fun Point.plus(other: Point): Point = this.plusXY(other.x, other.y)
-    operator fun Int.times(other: Point): Point = xyCoordinate(this*other.x, this*other.y)
+    operator fun Int.times(other: Point): Point = pos(this*other.x, this*other.y)
 }
 
 data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point) {
@@ -54,14 +52,14 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
         }
 
         private fun String.buttonToPoint(): Point {
-            return xyCoordinate(
+            return pos(
                 x = this.substringAfter("X+").substringBefore(",").trim().toInt(),
                 y = this.substringAfter("Y+").trim().toInt()
             )
         }
 
         private fun String.prizeToPoint(): Point {
-            return xyCoordinate(
+            return pos(
                 x = this.substringAfter("X=").substringBefore(",").trim().toInt(),
                 y = this.substringAfter("Y=").trim().toInt()
             )

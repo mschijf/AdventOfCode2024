@@ -1,38 +1,34 @@
 package tool.coordinate.real
 
 /**
- * create a Line by using the definition: aX + bY = c
+ * create a Line by using the definition: Y = mX + c
  */
-data class Line(val a: Double, val b: Double, val c: Double) {
+data class Line(val m: Double, val c: Double) {
+
     companion object {
         fun of(p1: Coordinate, p2: Coordinate): Line {
-            val a = (p1.y - p2.y) / (p1.x - p2.x)
+            val m = (p2.y - p1.y) / (p2.x - p1.x)
             return Line(
-                a = a,
-                b = -1.0,
-                c = p1.y - a * p1.x
+                m = m,
+                c = p1.y - m * p1.x
             )
         }
 
         /**
-         * create a Line by using the definition Y = aX + b
+         * create a Line by using the definition aX + bY = c
+         *   meaning bY = -aX + c <=> Y = (-a/b)X + (c/b)
          */
-        fun of(a: Double, b: Double): Line {
-            return Line(a, -1.0, -b)
+        fun of(a: Double, b: Double, c: Double): Line {
+            return Line(-a/b, c/b)
         }
     }
 
-    fun intersectionOrNull(other: Line): Coordinate? {
-        if (other.a == 0.0 || this.a == 0.0)
-            return null
-
-        val tmp = this.a / other.a
-        if (this.b - other.b * tmp == 0.0)
-            return null
-
-        val y = (this.c - other.c * tmp) / (this.b - other.b * tmp)
-        val x = (this.c - this.b * y) / this.a
+    fun intersectionPoint(other: Line): Coordinate {
+        val x = (other.c - this.c) / (this.m - other.m)
+        val y = this.m * x + this.c
         return Coordinate(x, y)
     }
+
+    fun slope(): Double = m
 }
 

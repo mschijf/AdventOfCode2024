@@ -67,11 +67,11 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
     }
 
     fun calculateByIntersectionPoint(costA: Int, costB: Int, extra: Long): Long {
-        val line1 = Line(buttonA.x.toDouble(), buttonB.x.toDouble(), prize.x.toDouble()+extra)
-        val line2 = Line(buttonA.y.toDouble(), buttonB.y.toDouble(), prize.y.toDouble()+extra)
-        val (aPushes, bPushes) = line1.intersectionOrNull(line2)?: return 0
+        val line1 = Line.of(buttonA.x.toDouble(), buttonB.x.toDouble(), prize.x.toDouble() + extra)
+        val line2 = Line.of(buttonA.y.toDouble(), buttonB.y.toDouble(), prize.y.toDouble() + extra)
+        val (aPushes, bPushes) = line1.intersectionPoint(line2)
 
-        return if (aPushes.isCloseToLong() && bPushes.isCloseToLong()) {
+        return if (aPushes.isCloseToLong(tolerance=0.001) && bPushes.isCloseToLong(tolerance=0.001)) {
             aPushes.roundToLong()*costA + bPushes.roundToLong() * costB
         } else {
             0
@@ -79,5 +79,3 @@ data class ClawMachine(val buttonA: Point, val buttonB: Point, val prize: Point)
     }
 
 }
-
-

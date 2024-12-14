@@ -1,6 +1,8 @@
-package tool.coordinate.twodimensional.real
+package tool.coordinate.real
 
-// definition of a line: aX + bY = c
+/**
+ * create a Line by using the definition: aX + bY = c
+ */
 data class Line(val a: Double, val b: Double, val c: Double) {
     companion object {
         fun of(p1: Coordinate, p2: Coordinate): Line {
@@ -10,6 +12,13 @@ data class Line(val a: Double, val b: Double, val c: Double) {
                 b = -1.0,
                 c = p1.y - a * p1.x
             )
+        }
+
+        /**
+         * create a Line by using the definition Y = aX + b
+         */
+        fun of(a: Double, b: Double): Line {
+            return Line(a, -1.0, -b)
         }
     }
 

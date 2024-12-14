@@ -2,7 +2,7 @@ package adventofcode
 
 import tool.coordinate.twodimensional.Point
 import tool.coordinate.twodimensional.pos
-import tool.coordinate.twodimensional.real.Line
+import tool.coordinate.real.Line
 import tool.mylambdas.splitByCondition
 import tool.primarytype.isCloseToLong
 import kotlin.math.roundToLong

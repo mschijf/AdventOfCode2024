@@ -23,7 +23,7 @@ data class Rectangle(val p1: Point, val p2: Point) {
     fun bottomRight(): Point = pos(maxX, maxY)
 
     fun area() : Long {
-        return IntLine(topLeft(), topRight()).length().toLong() * IntLine(topRight(), bottomRight()).length()
+        return LinePiece(topLeft(), topRight()).length().toLong() * LinePiece(topRight(), bottomRight()).length()
     }
 
 }

@@ -1,3 +1,3 @@
-package tool.coordinate.twodimensional.real
+package tool.coordinate.real
 
 data class Coordinate(val x: Double, val y: Double)

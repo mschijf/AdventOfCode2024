@@ -17,23 +17,21 @@ class Day15(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Warehouse Wo
 
     override fun resultPartOne(): Any {
         val grid = Grid.of(input.first().asGrid())
-        moveList.forEach { mv ->
-            grid.moveRobot(mv)
-        }
+        moveList.forEach { mv -> grid.moveRobot(mv) }
 //        grid.print()
-        println("right answer = 1465152")
         return grid.gpsSum()
     }
 
     override fun resultPartTwo(): Any {
-        val grid = BigGrid.of(input.first().asGrid())
+        val grid = WideGrid.of(input.first().asGrid())
         moveList.forEach { mv -> grid.moveRobot(mv) }
 //        grid.print()
-        println("right answer = 1511259")
         return grid.gpsSum()
     }
 
 }
+
+//======================================================================================================================
 
 class Grid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
     private val grid = initialWarehousMap.toMutableMap()
@@ -81,7 +79,9 @@ class Grid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
     }
 }
 
-class BigGrid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
+//======================================================================================================================
+
+class WideGrid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
 
     private val grid = initialWarehousMap.toMutableMap()
     private var robotPos = initialRobotPos
@@ -93,13 +93,7 @@ class BigGrid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
             if (dir == Direction.LEFT || dir == Direction.RIGHT) {
                 val firstEmpty = firstEmptySpotOrNullHorizontal(nextPos, dir)
                 if (firstEmpty != null) {
-                    var current = firstEmpty!!
-                    while (current != nextPos) {
-                        val nextNeighbour = current.moveOneStep(dir.opposite())
-                        grid[current] = grid[nextNeighbour]!!
-                        grid[nextNeighbour] = '.'
-                        current = nextNeighbour
-                    }
+                    moveBoxesHorizontally(nextPos, firstEmpty, dir)
                     robotPos = nextPos
                 }
             } else {
@@ -122,15 +116,25 @@ class BigGrid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
         return if (grid[current] == '#') null else current
     }
 
-    private fun boxesToMoveVertically(fromPos: Point, dir: Direction): Set<Point> {
-        val allBoxes = mutableSetOf<Point>()
+    private fun moveBoxesHorizontally(firstBoxPos: Point, toEmptySpot: Point, dir: Direction) {
+        var current = toEmptySpot
+        while (current != firstBoxPos) {
+            val nextNeighbour = current.moveOneStep(dir.opposite())
+            grid[current] = grid[nextNeighbour]!!
+            grid[nextNeighbour] = '.'
+            current = nextNeighbour
+        }
+    }
 
+
+    private fun boxesToMoveVertically(fromPos: Point, dir: Direction): Set<Point> {
         var currentLevelBoxes = if (grid[fromPos] == '[') {
             listOf(fromPos, fromPos.right())
         } else {
             listOf(fromPos, fromPos.left())
         }
 
+        val allBoxes = mutableSetOf<Point>()
         while (true) {
             allBoxes.addAll(currentLevelBoxes)
             val nextLevelBoxes =
@@ -174,10 +178,10 @@ class BigGrid(initialWarehousMap: Map<Point, Char>, initialRobotPos: Point) {
     }
 
     companion object {
-        fun of(rawGrid: Map<Point,Char>): BigGrid {
+        fun of(rawGrid: Map<Point,Char>): WideGrid {
             val doubleGrid = rawGrid.toDoubleGrid()
             val robotPos = doubleGrid.filterValues { it == '@'}.keys.first()
-            return BigGrid(
+            return WideGrid(
                 initialWarehousMap = doubleGrid.filterValues { it != '@' } + mapOf(robotPos to '.') ,
                 initialRobotPos = robotPos
             )

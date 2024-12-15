@@ -11,53 +11,51 @@ fun main() {
 }
 
 
-// 1515655 too high
-
 class Day15(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Warehouse Woes", hasInputFile = true) {
 
     private val input = inputLines.splitByCondition { it.isBlank() }
     val moveList = input.last().joinToString("").toList()
 
-//    val grid = input.first().asGrid()
-//    var robotPos = grid.filterValues { it == '@'}.keys.first()
-//    val walls = grid.filterValues { it == '#'}.keys
-//    val boxes = grid.filterValues { it == 'O'}.keys.toMutableSet()
-//
-//    override fun resultPartOne(): Any {
-//        moveList.forEach { mv ->
-//            move(mv)
-//        }
+    val grid = input.first().asGrid()
+    var robotPos = grid.filterValues { it == '@'}.keys.first()
+    val walls = grid.filterValues { it == '#'}.keys
+    val boxes = grid.filterValues { it == 'O'}.keys.toMutableSet()
+
+    override fun resultPartOne(): Any {
+        moveList.forEach { mv ->
+            move(mv)
+        }
 //        printGrid()
-//        return boxes.sumOf {it.x + 100*it.y}
-//    }
-//
-//    private fun printGrid() {
-//        val newGrid = walls.map{ it to '#'}.toMap() + boxes.map{ it to '0'}.toMap() + (robotPos to '@')
-//        newGrid.printAsGrid { ch -> ch.toString() }
-//    }
-//
-//    private fun move(aMove: Char) {
-//        val dir = Direction.ofSymbol(aMove.toString())
-//        val nextPos = robotPos.moveOneStep(dir)
-//        if (nextPos in boxes) {
-//            val firstEmpty = firtsEmptySpotOrNull(nextPos, dir)
-//            if (firstEmpty != null) {
-//                boxes.remove(nextPos)
-//                boxes.add(firstEmpty)
-//                robotPos = nextPos
-//            }
-//        } else if (nextPos !in walls) {
-//            robotPos = nextPos
-//        }
-//    }
-//
-//    private fun firtsEmptySpotOrNull(fromPos: Point, dir: Direction): Point? {
-//        var current = fromPos
-//        while (current in boxes) {
-//            current = current.moveOneStep(dir)
-//        }
-//        return if (current in walls) null else current
-//    }
+        return boxes.sumOf {it.x + 100*it.y}
+    }
+
+    private fun printGrid() {
+        val newGrid = walls.map{ it to '#'}.toMap() + boxes.map{ it to '0'}.toMap() + (robotPos to '@')
+        newGrid.printAsGrid { ch -> ch.toString() }
+    }
+
+    private fun move(aMove: Char) {
+        val dir = Direction.ofSymbol(aMove.toString())
+        val nextPos = robotPos.moveOneStep(dir)
+        if (nextPos in boxes) {
+            val firstEmpty = firtsEmptySpotOrNull(nextPos, dir)
+            if (firstEmpty != null) {
+                boxes.remove(nextPos)
+                boxes.add(firstEmpty)
+                robotPos = nextPos
+            }
+        } else if (nextPos !in walls) {
+            robotPos = nextPos
+        }
+    }
+
+    private fun firtsEmptySpotOrNull(fromPos: Point, dir: Direction): Point? {
+        var current = fromPos
+        while (current in boxes) {
+            current = current.moveOneStep(dir)
+        }
+        return if (current in walls) null else current
+    }
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -79,13 +77,13 @@ class Day15(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Warehouse Wo
     var bigRobotPos = bigGrid.filterValues { it == '@'}.keys.first()
 
     override fun resultPartTwo(): Any {
-        bigGrid.printAsGrid { ch -> ch.toString() }
-        println()
-        println()
+//        bigGrid.printAsGrid { ch -> ch.toString() }
+//        println()
+//        println()
         moveList.forEach { mv -> bigMove(mv) }
-        bigGrid.printAsGrid { ch -> ch.toString() }
-        println()
-        println("wrong attempt: 1515655 too high")
+//        bigGrid.printAsGrid { ch -> ch.toString() }
+//        println()
+//        println("wrong attempt: 1515655 too high")
         return bigGrid.filterValues { it == '[' }.keys.sumOf {it.x + 100*it.y}
     }
 
@@ -132,7 +130,7 @@ class Day15(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Warehouse Wo
     }
 
     private fun boxesToMoveVertically(fromPos: Point, dir: Direction): Set<Point> {
-        var allBoxes = mutableSetOf<Point>()
+        val allBoxes = mutableSetOf<Point>()
 
         var currentLevelBoxes = if (bigGrid[fromPos] == '[') {
             listOf(fromPos, fromPos.right())
@@ -149,15 +147,16 @@ class Day15(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Warehouse Wo
                 return emptySet()
             if (nextLevelBoxes.isEmpty())
                 return allBoxes
-            val mostLeft = nextLevelBoxes.first()
-            val mostRight = nextLevelBoxes.last()
-            if (bigGrid[mostLeft] == ']') {
-                nextLevelBoxes.add(mostLeft.left())
+
+            val extraSet = mutableSetOf<Point>()
+            nextLevelBoxes.forEach { bp ->
+                if (bigGrid[bp] == '[') {
+                    extraSet.add (bp.right())
+                } else {
+                    extraSet.add (bp.left())
+                }
             }
-            if (bigGrid[mostRight] == '[') {
-                nextLevelBoxes.add(mostRight.right())
-            }
-            currentLevelBoxes = nextLevelBoxes
+            currentLevelBoxes = nextLevelBoxes + extraSet
         }
     }
 

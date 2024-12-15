@@ -89,6 +89,10 @@ abstract class PuzzleSolverAbstract (
 
     fun inputAsGrid(testFile: String="example", liveFile: String="input", path:String = defaultPath()) =
         inputLines(testFile=testFile, liveFile=liveFile, path=path)
+            .asGrid()
+
+    fun List<String>.asGrid() =
+        this
             .flatMapIndexed { y, line ->
                 line.mapIndexed { x, ch ->  pos(x,y) to ch}
             }

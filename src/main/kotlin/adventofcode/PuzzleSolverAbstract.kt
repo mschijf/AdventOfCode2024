@@ -40,7 +40,7 @@ abstract class PuzzleSolverAbstract (
         val timePassed1 = getResultTimeOnly() { resultPartOne() }
         val timePassed2 = getResultTimeOnly() { resultPartTwo() }
 
-        print("%d.%03d sec, ".format(timePassed1 / 1000, timePassed1 % 1000))
+        print("%d.%03d sec  ".format(timePassed1 / 1000, timePassed1 % 1000))
         print("%d.%03d sec".format(timePassed2 / 1000, timePassed2 % 1000))
         println()
     }

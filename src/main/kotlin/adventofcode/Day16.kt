@@ -29,20 +29,20 @@ class Day16(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Reindeer Maz
         var cheapestRoute = Int.MAX_VALUE
         val totalSet = mutableSetOf<Point>()
 
-        val visitedMap = mutableMapOf<Point, Tile>()
+        val visitedMap = mutableMapOf<Point, Int>()
         val visitedCombi = mutableSetOf<Pair<Point, Direction>>()
 
         val compareByCost: Comparator<Tile> = compareBy { it.cost }
         val priorityQueue = PriorityQueue<Tile>(compareByCost)
 
-        priorityQueue.add(Tile(startPos, Direction.RIGHT, 0, emptyList()))
+        priorityQueue.add(Tile(startPos, Direction.RIGHT, 0, listOf(startPos)))
         while (priorityQueue.isNotEmpty()) {
             val current = priorityQueue.remove()
             visitedMap.remove(current.pos)
             visitedCombi.add(Pair(current.pos, current.dir))
             if (current.pos == endPos) {
                 cheapestRoute = current.cost
-                totalSet += listOf(startPos) + current.pathToTile
+                totalSet += current.pathToTile
             } else if (current.cost < cheapestRoute) {
 
                 Direction.entries.filter { d -> d.opposite() != current.dir }.forEach { newDir ->
@@ -50,18 +50,19 @@ class Day16(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Reindeer Maz
                     if (nextPos in legalFields) {
                         val newCost = current.cost + 1 + if (current.dir == newDir) 0 else 1000
                         val nextTile = Tile(nextPos, newDir, newCost, current.pathToTile + nextPos)
+
                         if (visitedMap.contains(nextPos)) {
-                            if (visitedMap[nextPos]!!.cost > newCost) {
-                                visitedMap[nextPos] = nextTile
+                            if (newCost < visitedMap[nextPos]!!) {
+                                visitedMap[nextPos] = newCost
                                 val alreadyInQueue = priorityQueue.firstOrNull { it.pos == nextPos }
                                 priorityQueue.remove(alreadyInQueue)
                                 priorityQueue.add(nextTile)
-                            } else if (visitedMap[nextPos]!!.cost == newCost) {
+                            } else if (newCost == visitedMap[nextPos]!!) {
                                 if (Pair(nextPos, newDir) !in visitedCombi)
                                     priorityQueue.add(nextTile)
                             }
                         } else {
-                            visitedMap[nextPos] = nextTile
+                            visitedMap[nextPos] = newCost
                             priorityQueue.add(nextTile)
                         }
 
@@ -75,5 +76,3 @@ class Day16(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Reindeer Maz
 }
 
 data class Tile(val pos: Point, val dir: Direction, val cost: Int, val pathToTile: List<Point>)
-
-

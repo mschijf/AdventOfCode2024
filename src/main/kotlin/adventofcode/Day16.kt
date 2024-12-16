@@ -16,53 +16,64 @@ class Day16(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Reindeer Maz
     private val endPos = maze.filterValues { it == 'E' }.keys.first()
 
     override fun resultPartOne(): Any {
-        println("79404 is correct")
-        return cheapestRoute()
+//        println("79404 is correct")
+        return cheapestRoute().first
     }
 
     override fun resultPartTwo(): Any {
-        return "TODO"
+//        println("451 is correct")
+        return cheapestRoute().second
     }
 
-    private fun cheapestRoute(): Long {
-        val visitedMap = mutableMapOf<Point, Reindeer>()
+    private fun cheapestRoute(): Pair<Int, Int> {
+        var cheapestRoute = Int.MAX_VALUE
+        val totalSet = mutableSetOf<Point>()
 
-        val compareByCost: Comparator<Reindeer> = compareBy { it.cost }
-        val priorityQueue = PriorityQueue<Reindeer>(compareByCost)
+        val visitedMap = mutableMapOf<Point, Tile>()
+        val visitedCombi = mutableSetOf<Pair<Point, Direction>>()
 
-        priorityQueue.add(Reindeer(startPos, Direction.RIGHT, 0L))
+        val compareByCost: Comparator<Tile> = compareBy { it.cost }
+        val priorityQueue = PriorityQueue<Tile>(compareByCost)
+
+        priorityQueue.add(Tile(startPos, Direction.RIGHT, 0, emptyList()))
         while (priorityQueue.isNotEmpty()) {
             val current = priorityQueue.remove()
             visitedMap.remove(current.pos)
-
+            visitedCombi.add(Pair(current.pos, current.dir))
             if (current.pos == endPos) {
-                return current.cost
-            }
+                cheapestRoute = current.cost
+                totalSet += listOf(startPos) + current.pathToTile
+            } else if (current.cost < cheapestRoute) {
 
-            Direction.entries.filter{d -> d.opposite() != current.dir }.forEach { newDir ->
-                val nextPos = current.pos.moveOneStep(newDir)
-                if (nextPos in legalFields) {
-                    val newCost = current.cost + 1 + if (current.dir == newDir) 0L else 1000L
-
-                    if (visitedMap.contains(nextPos)) {
-                        if (visitedMap[nextPos]!!.cost > newCost) {
-                            visitedMap[nextPos] = Reindeer(nextPos, newDir, newCost)
-                            val alreadyInQueue = priorityQueue.firstOrNull { it.pos == nextPos }
-                            priorityQueue.remove(alreadyInQueue)
-                            priorityQueue.add(Reindeer(nextPos, newDir, newCost))
+                Direction.entries.filter { d -> d.opposite() != current.dir }.forEach { newDir ->
+                    val nextPos = current.pos.moveOneStep(newDir)
+                    if (nextPos in legalFields) {
+                        val newCost = current.cost + 1 + if (current.dir == newDir) 0 else 1000
+                        val nextTile = Tile(nextPos, newDir, newCost, current.pathToTile + nextPos)
+                        if (visitedMap.contains(nextPos)) {
+                            if (visitedMap[nextPos]!!.cost > newCost) {
+                                visitedMap[nextPos] = nextTile
+                                val alreadyInQueue = priorityQueue.firstOrNull { it.pos == nextPos }
+                                priorityQueue.remove(alreadyInQueue)
+                                priorityQueue.add(nextTile)
+                            } else if (visitedMap[nextPos]!!.cost == newCost) {
+                                if (Pair(nextPos, newDir) !in visitedCombi)
+                                    priorityQueue.add(nextTile)
+                            }
+                        } else {
+                            visitedMap[nextPos] = nextTile
+                            priorityQueue.add(nextTile)
                         }
-                    } else {
-                        visitedMap[nextPos] = Reindeer(nextPos, newDir, newCost)
-                        priorityQueue.add(Reindeer(nextPos, newDir, newCost))
-                    }
 
+                    }
                 }
+
             }
         }
-        return -1L
+        return Pair(cheapestRoute, totalSet.size)
     }
 }
 
-data class Reindeer(val pos: Point, val dir: Direction, val cost: Long)
+data class Tile(val pos: Point, val dir: Direction, val cost: Int, val pathToTile: List<Point>)
 
 

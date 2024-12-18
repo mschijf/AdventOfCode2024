@@ -20,7 +20,8 @@ class Day18(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="RAM Run", ha
     }
 
     override fun resultPartTwo(): Any {
-        return lineairSearch()
+//        return lineairSearch()
+        return binarySearch()
     }
 
     private fun lineairSearch(): Point {
@@ -32,20 +33,23 @@ class Day18(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="RAM Run", ha
     }
 
 
-//    private fun binarySearch():Point {
-//        var l = 2957//nBytesFallen+1
-//        var h = fallingBytes.size-1
-//        while (l < h) {
-//            var i = (l+h) / 2
-//            if (fallingBytes.take(i).toSet().shortestRoute() > 0) {
-//                l = i+1
-//            } else {
-//                h = i - 1
-//            }
-//        }
-//        println("$l $h")
-//        return fallingBytes[l]
-//    }
+    private fun binarySearch():Point {
+        var l = 0
+        var h = fallingBytes.size-1
+        var lastWithPath = -1
+        while (l <= h) {
+            val mid = l + ( (h-l) / 2 )
+            if (fallingBytes.take(mid).toSet().shortestRoute() > 0) {
+                l = mid + 1
+                lastWithPath = mid
+            } else {
+                h = mid - 1
+            }
+        }
+        if (lastWithPath == -1)
+            throw Exception("lastWithPath not found")
+        return fallingBytes[lastWithPath]
+    }
 
     private fun Set<Point>.shortestRoute(start: Point=pos(0,0), end: Point=pos(maxX, maxY)): Int {
         val visited = mutableSetOf<Point>()

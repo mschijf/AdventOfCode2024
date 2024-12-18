@@ -7,7 +7,7 @@ fun main() {
     Day18(test=false).showResult()
 }
 
-class Day18(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="TBD", hasInputFile = true) {
+class Day18(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="RAM Run", hasInputFile = true) {
 
     private val maxX = if (test) 6 else 70
     private val maxY = if (test) 6 else 70
@@ -20,12 +20,32 @@ class Day18(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="TBD", hasInp
     }
 
     override fun resultPartTwo(): Any {
-        var i = nBytesFallen
+        return lineairSearch()
+    }
+
+    private fun lineairSearch(): Point {
+        var i = nBytesFallen+1
         while (fallingBytes.take(i).toSet().shortestRoute() > 0) {
             i++
         }
         return fallingBytes[i-1]
     }
+
+
+//    private fun binarySearch():Point {
+//        var l = 2957//nBytesFallen+1
+//        var h = fallingBytes.size-1
+//        while (l < h) {
+//            var i = (l+h) / 2
+//            if (fallingBytes.take(i).toSet().shortestRoute() > 0) {
+//                l = i+1
+//            } else {
+//                h = i - 1
+//            }
+//        }
+//        println("$l $h")
+//        return fallingBytes[l]
+//    }
 
     private fun Set<Point>.shortestRoute(start: Point=pos(0,0), end: Point=pos(maxX, maxY)): Int {
         val visited = mutableSetOf<Point>()

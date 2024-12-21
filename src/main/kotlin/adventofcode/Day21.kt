@@ -4,6 +4,7 @@ import tool.coordinate.twodimensional.Direction
 import tool.coordinate.twodimensional.Point
 import tool.coordinate.twodimensional.pos
 
+
 fun main() {
     Day21(test=false).showResult()
 }
@@ -12,30 +13,55 @@ class Day21(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Keypad Conun
 
     private val codeList = inputLines
 
-    private val robotNumerical0 = KeyPath(numerical = true)
-    private val robotDirectional1 = KeyPath(numerical = false)
-    private val robotDirectional2 = KeyPath(numerical = false)
-
     override fun resultPartOne(): Any {
-        return codeList.sumOf { code -> getManualInput(code).minOf { it.length } * code.dropLast(1).toInt() }
-//        return codeList.map { code -> getManualInput(code).size }
+        val robotChain = listOf(KeyPad(numerical = true)) + (1..2).map{KeyPad(numerical = false)}
+//        return codeList.map { code -> getManualInputRecursive(code, robotChain) }
+        println(codeList.take(1).map { code -> getManualInput(code, robotChain.take(1)).map {it.length}.groupingBy { it }.eachCount() })
+        println(codeList.take(1).map { code -> getManualInput(code, robotChain.take(2)).map {it.length}.groupingBy { it }.eachCount() })
+        println(codeList.take(1).map { code -> getManualInput(code, robotChain.take(3)).map {it.length}.groupingBy { it }.eachCount() })
+        return ""
     }
 
     override fun resultPartTwo(): Any {
-        return "TODO"
+        val robotChain = listOf(KeyPad(numerical = true)) + (1..2).map{KeyPad(numerical = false)}
+        return codeList.map { code -> getManualInputRecursive(code, robotChain) }
     }
 
-    private fun getManualInput(code: String) : List<String> {
-        return robotNumerical0.allSequences(code).flatMap { r0Sequence ->
-            robotDirectional1.allSequences(r0Sequence).flatMap { r1Sequence ->
-                robotDirectional2.allSequences(r1Sequence)
+    private fun getManualInput(code: String, robotChain: List<KeyPad>) : List<String> {
+        if (robotChain.size == 3) {
+            return robotChain[0].allSequences(code).flatMap { r0Sequence ->
+                robotChain[1].allSequences(r0Sequence).flatMap { r1Sequence ->
+                    robotChain[2].allSequences(r1Sequence)
+                }
             }
+        } else if  (robotChain.size == 2) {
+            return robotChain[0].allSequences(code).flatMap { r0Sequence ->
+                robotChain[1].allSequences(r0Sequence)
+            }
+        } else {
+            return robotChain[0].allSequences(code)
         }
     }
+
+    private fun getManualInputRecursive(code: String, robotChain: List<KeyPad>): Int {
+        if (robotChain.isEmpty()) {
+            return code.length
+        }
+        var min = Int.MAX_VALUE
+        val newCodeList = robotChain.first().allSequences(code)
+        newCodeList.forEach { newCode ->
+            val tmp = getManualInputRecursive(newCode, robotChain.drop(1))
+            if (tmp < min)
+                min = tmp
+        }
+        return min
+    }
+
+
 }
 
 
-class KeyPath(numerical: Boolean) {
+class KeyPad(numerical: Boolean) {
     private val keyPad: Map<Char, Point> =
         if (numerical)
             mapOf(
@@ -61,6 +87,8 @@ class KeyPath(numerical: Boolean) {
             )
 
     private val gap = if (numerical) pos(0,3) else pos (0,0)
+
+    private val fromToMap = mutableMapOf<Pair<Char, Char>, Int>()
 
     fun allSequences(charPath: String, startChar: Char = 'A'): List<String> {
         val tmp = mutableListOf<List<String>>()
@@ -90,6 +118,10 @@ class KeyPath(numerical: Boolean) {
             }
         }
         return result
+    }
+
+    fun clearCache() {
+        cache.clear()
     }
 
     private var cache = mutableMapOf<List<List<String>>, List<String>>()

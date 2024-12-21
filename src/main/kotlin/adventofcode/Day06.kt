@@ -15,6 +15,8 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
     private val guardPos = grid.filter { it.value in "^<>v" }.keys.first()
     private val guardDir = Direction.ofSymbol(grid[guardPos]!!.toString())
 
+    private val minX = allFields.minOf{ it.x }
+    private val minY = allFields.minOf{ it.y }
     private val maxX = allFields.maxOf{ it.x }
     private val maxY = allFields.maxOf{ it.y }
 
@@ -44,6 +46,8 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
 
     private fun hasCyclicWalk(extraObstruction: Point): Boolean {
         val visited = mutableSetOf<Pair<Point, Direction>>()
+        var previousCycleSet = mutableSetOf<Set<Pair<Point, Direction>>>()
+
         var currentPos = guardPos
         var currentDirection = guardDir
         do  {
@@ -56,14 +60,20 @@ class Day06(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Guard Galliv
                 currentPos = possibleNextPos
             }
             if (Pair(currentPos, currentDirection) in visited) {
+                previousCycleSet.add(makeCycleSet())
                 return true
             }
         } while (currentPos.onGrid())
         return false
     }
 
+    private fun makeCycleSet(): Set<Pair<Point, Direction>> {
+        return emptySet()
+    }
+
+
     private fun Point.onGrid(): Boolean {
-        return this.x in 0..maxX && this.y in 0..maxY
+        return this.x in minX..maxX && this.y in minY..maxY
     }
 }
 

@@ -3,39 +3,35 @@ package adventofcode
 import tool.coordinate.twodimensional.Direction
 import tool.coordinate.twodimensional.Point
 import tool.coordinate.twodimensional.pos
-import kotlin.io.path.fileVisitor
-import kotlin.math.absoluteValue
 
 fun main() {
-    Day21(test=true).showResult()
+    Day21(test=false).showResult()
 }
 
 class Day21(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Keypad Conundrum", hasInputFile = true) {
 
     private val codeList = inputLines
 
-    private val robot1 = KeyPath(numerical = true)
-    private val robot2 = KeyPath(numerical = false)
-    private val robot3 = KeyPath(numerical = false)
+    private val robotNumerical0 = KeyPath(numerical = true)
+    private val robotDirectional1 = KeyPath(numerical = false)
+    private val robotDirectional2 = KeyPath(numerical = false)
 
     override fun resultPartOne(): Any {
-        println("218300 too high")
-        println(codeList)
-        println(codeList.map {code -> code.dropLast(1).toInt()})
-//        println(codeList.map {code -> getManualInput(code).length})
-//        val xx = codeList.sumOf {code -> getManualInput(code).length * code.dropLast(1).toInt()}
-        return robot1.allSequences("029A")
+        return codeList.sumOf { code -> getManualInput(code).minOf { it.length } * code.dropLast(1).toInt() }
+//        return codeList.map { code -> getManualInput(code).size }
     }
 
     override fun resultPartTwo(): Any {
         return "TODO"
     }
 
-//    private fun getManualInput(code: String) : String {
-//        return robot3.sequence(
-//            robot2.sequence(
-//                robot1.sequence(code)))
-//    }
+    private fun getManualInput(code: String) : List<String> {
+        return robotNumerical0.allSequences(code).flatMap { r0Sequence ->
+            robotDirectional1.allSequences(r0Sequence).flatMap { r1Sequence ->
+                robotDirectional2.allSequences(r1Sequence)
+            }
+        }
+    }
 }
 
 
@@ -65,32 +61,6 @@ class KeyPath(numerical: Boolean) {
             )
 
     private val gap = if (numerical) pos(0,3) else pos (0,0)
-
-//    private fun path(fromButton: Char, toButton: Char): String {
-//        val fromPos = keyPad[fromButton]!!
-//        val toPos = keyPad[toButton]!!
-//
-//        val deltaX = fromPos.x - toPos.x
-//        val deltaY = fromPos.y - toPos.y
-//
-//        val horChar = if (deltaX < 0) ">" else "<"
-//        val verChar = if (deltaY < 0) "v" else "^"
-//
-//        return if (fromPos.y == gap.y && toPos.x == gap.x) {
-//            verChar.repeat(deltaY.absoluteValue) + horChar.repeat(deltaX.absoluteValue)
-//        } else {
-//            horChar.repeat(deltaX.absoluteValue) + verChar.repeat(deltaY.absoluteValue)
-//        }
-//    }
-//
-//    fun sequence(charPath: String, startChar: Char = 'A'): String {
-//        var out = ""
-//        var fullPath = startChar + charPath
-//        for (i in 1..< fullPath.length) {
-//            out += path(fullPath[i-1], fullPath[i]) + "A"
-//        }
-//        return out
-//    }
 
     fun allSequences(charPath: String, startChar: Char = 'A'): List<String> {
         val tmp = mutableListOf<List<String>>()
@@ -122,9 +92,13 @@ class KeyPath(numerical: Boolean) {
         return result
     }
 
+    private var cache = mutableMapOf<List<List<String>>, List<String>>()
     private fun List<List<String>>.allCombinations() : List<String> {
         if (this.size == 1) {
             return this.first()
+        }
+        if (cache.contains(this)) {
+            return cache[this]!!
         }
         val result = mutableListOf<String>()
         this[0].forEach { str ->
@@ -133,6 +107,7 @@ class KeyPath(numerical: Boolean) {
                 result.add(str + it)
             }
         }
+        cache[this] = result
         return result
     }
 

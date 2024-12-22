@@ -31,34 +31,33 @@ class Day20(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Race Conditi
         }
 
         val normalTime = shortestPathFromStartPointMap[end]!!
-        val x = cheatCandidates.map { cheatPair -> trackSet.shortestRoute(cheatPair) }.filter { it < normalTime }
-        println("1521 is correct")
-//        return x.groupingBy { normalTime - it }.eachCount().toSortedMap()
-        return x.filter {normalTime - it >= 100}.size
+//        println("1521 is correct")
+        return cheatCandidates
+            .map { cheatPair -> shortestRoutePart1(cheatPair) }
+            .count {normalTime - it >= 100}
     }
 
     override fun resultPartTwo(): Any {
         val minimalToSave = if (test) 50 else 100
         val cheatCandidates = trackSet.toList()
             .filterCombinedItems { point1, point2 ->  point1.distanceTo(point2) <= 20 }
+            .flatMap { aPair -> listOf(aPair, Pair(aPair.second, aPair.first)) }
+
         val normalTime = shortestPathFromStartPointMap[end]!!
-        println(normalTime)
 
-        val xx = cheatCandidates.flatMap { cheatPair ->
-            listOf(trackSet.shortestRoute2(cheatPair), trackSet.shortestRoute2(Pair(cheatPair.second, cheatPair.first)))}
-
-        println("988903 is too low")
-//        return xx.filter{normalTime - it >= minimalToSave}.groupingBy { normalTime - it }.eachCount().toSortedMap()
-        return xx.count {normalTime - it >= minimalToSave}
+//        println("1013106 is correct")
+        return cheatCandidates
+            .map { cheatPair -> shortestRoutePart2(cheatPair) }
+            .count {normalTime - it >= minimalToSave}
     }
 
-    private fun Set<Point>.shortestRoute(cheatCandidate: Pair<Point, Point>): Int {
+    private fun shortestRoutePart1(cheatCandidate: Pair<Point, Point>): Int {
         return 2 +
                 shortestPathFromStartPointMap[cheatCandidate.first]!! +
                 shortestPathToEndPointMap[cheatCandidate.second]!!
     }
 
-    private fun Set<Point>.shortestRoute2(cheatCandidate: Pair<Point, Point>): Int {
+    private fun shortestRoutePart2(cheatCandidate: Pair<Point, Point>): Int {
         return cheatCandidate.first.distanceTo(cheatCandidate.second) +
                 shortestPathFromStartPointMap[cheatCandidate.first]!! +
                 shortestPathToEndPointMap[cheatCandidate.second]!!

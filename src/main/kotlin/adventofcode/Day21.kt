@@ -20,12 +20,12 @@ class Day21(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Keypad Conun
     private val directionalKeyPad = KeyPad(numerical = false)
 
     override fun resultPartOne(): Any {
-        println("correct:       213536")
+//        println("correct:       213536")
         return determineLength(2)
     }
 
     override fun resultPartTwo(): Any {
-        println("correct:       258369757013802")
+//        println("correct:       258369757013802")
         return determineLength(25)
     }
 

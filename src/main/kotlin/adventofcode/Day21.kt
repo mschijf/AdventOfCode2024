@@ -1,6 +1,5 @@
 package adventofcode
 
-import tool.coordinate.twodimensional.Direction
 import tool.coordinate.twodimensional.Point
 import tool.coordinate.twodimensional.pos
 
@@ -53,9 +52,12 @@ class RobotArm(
             return fromToMap[key]!!
 
         val paths = keyPad.getBestPaths(from, to)
-        val pathLength = paths.minOf { path ->
-            ("A"+path).windowed(2,1).sumOf { it ->  controllingRobot?.shortestSequenceFromCharToChar(it[0], it[1]) ?: 1}
-        }
+        val pathLength = paths
+            .minOf { path ->
+                ("A"+path)
+                .windowed(2,1)
+                .sumOf { it ->  controllingRobot?.shortestSequenceFromCharToChar(it[0], it[1]) ?: 1 }
+            }
 
         fromToMap[key] = pathLength
         return pathLength
@@ -104,25 +106,11 @@ class KeyPad(numerical: Boolean) {
                 result.add(current.second + "A")
             } else if (current.second.length < maxLength){
                 current.first.neighbors().filter { nb -> nb != gap && nb.distanceTo(endPoint) < current.first.distanceTo(endPoint) }.forEach { nb ->
-                    queue.add(Pair(nb, current.second + current.first.getDir(nb).directionSymbol))
+                    queue.add(Pair(nb, current.second + current.first.directionToOrNull(nb)!!.directionSymbol))
                 }
             }
         }
         return result
-    }
-
-    //todo: move to Point class
-    private fun Point.getDir(to: Point): Direction {
-        return if (this.x == to.x) {
-            if (this.y == to.y)
-                throw Exception ("from and to is same position")
-            else
-                if (this.y < to.y) Direction.DOWN else Direction.UP
-        } else if (this.y == to.y) {
-            if (this.x < to.x) Direction.RIGHT else Direction.LEFT
-        } else {
-            throw Exception ("no dir can be found")
-        }
     }
 }
 

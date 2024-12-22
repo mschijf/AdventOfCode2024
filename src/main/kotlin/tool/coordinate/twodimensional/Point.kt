@@ -79,7 +79,9 @@ data class Point private constructor(
     fun distanceTo(other: Point) = (other.x - x).absoluteValue + (other.y - y).absoluteValue
 
     fun directionToOrNull(other: Point) =
-        if (this.x == other.x) {
+        if (this == other) {
+            null
+        } else if (this.x == other.x) {
             if (this.above(other)) Direction.DOWN else Direction.UP
         } else if (this.y == other.y) {
             if (this.leftOf(other)) Direction.RIGHT else Direction.LEFT
@@ -88,7 +90,9 @@ data class Point private constructor(
         }
 
     fun windDirectionToOrNull(other: Point) =
-        if (this.x == other.x) {
+        if (this == other) {
+            null
+        } else if (this.x == other.x) {
             if (this.above(other)) WindDirection.SOUTH else WindDirection.NORTH
         } else if (this.y == other.y) {
             if (this.leftOf(other)) WindDirection.EAST else WindDirection.WEST

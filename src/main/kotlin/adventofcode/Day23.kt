@@ -26,8 +26,10 @@ class Day23(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="LAN Party", 
 
     override fun resultPartOne(): Any {
 //        println("             : 1170")
-        return allComputers.flatMap { it.value.strongConnectionGroupsOfThree() }.distinct()
-            .filter { it.any { elt -> elt.name.startsWith("t") } }.size
+        return allComputers.values
+            .filter{ it.name.startsWith("t") }
+            .flatMap { it.strongConnectionGroupsOfThree() }
+            .distinct().size
     }
 
 

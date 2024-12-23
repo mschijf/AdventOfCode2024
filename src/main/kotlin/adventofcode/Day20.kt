@@ -3,6 +3,7 @@ package adventofcode
 import tool.coordinate.twodimensional.Direction
 import tool.coordinate.twodimensional.Point
 import tool.mylambdas.collectioncombination.filterCombinedItems
+import tool.primarytype.swapped
 
 fun main() {
     Day20(test=false).showResult()
@@ -41,7 +42,7 @@ class Day20(test: Boolean) : PuzzleSolverAbstract(test, puzzleName="Race Conditi
         val minimalToSave = if (test) 50 else 100
         val cheatCandidates = trackSet.toList()
             .filterCombinedItems { point1, point2 ->  point1.distanceTo(point2) <= 20 }
-            .flatMap { aPair -> listOf(aPair, Pair(aPair.second, aPair.first)) }
+            .flatMap { aPair -> listOf(aPair, aPair.swapped()) }
 
         val normalTime = shortestPathFromStartPointMap[end]!!
 

@@ -10,7 +10,7 @@ fun main() {
 class Day24(test: Boolean) : PuzzleSolverAbstract(test, puzzleName = "Crossed Wires", hasInputFile = true) {
 
     private val splittedInput = inputLines.splitByCondition { it.isBlank() }
-    private val wireMap = splittedInput[0].map { it.substringBefore(": ") to it.substringAfter(": ").toInt() }.toMap()
+    private val wireMap = splittedInput[0].associate { it.substringBefore(": ") to it.substringAfter(": ").toInt() }
     private val highestBitIndex = wireMap.filter { it.key.startsWith("x") }.maxOf { it.key.drop(1).toInt() }
     private val device = Device.of(splittedInput[1])
 

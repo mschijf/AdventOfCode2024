@@ -9,6 +9,9 @@ data class Point3D(val x: Int, val y: Int, val z: Int) {
     fun plusY(dy: Int) = plusXYZ(0, dy, 0)
     fun plusZ(dz: Int) = plusXYZ(0, 0, dz)
 
+    operator fun plus(other: Point3D): Point3D = plusXYZ(other.x, other.y, other.z)
+    operator fun minus(other: Point3D): Point3D = plusXYZ(-other.x, -other.y, -other.z)
+
     fun distanceTo(otherPos: Point3D) = (otherPos.x - x).absoluteValue + (otherPos.y - y).absoluteValue + (otherPos.z - z).absoluteValue
 
     companion object {
@@ -30,6 +33,9 @@ data class Point3DLong(val x: Long, val y: Long, val z: Long) {
     fun plusX(dx: Long) = plusXYZ(dx, 0, 0)
     fun plusY(dy: Long) = plusXYZ(0, dy, 0)
     fun plusZ(dz: Long) = plusXYZ(0, 0, dz)
+
+    operator fun plus(other: Point3DLong): Point3DLong = plusXYZ(other.x, other.y, other.z)
+    operator fun minus(other: Point3DLong): Point3DLong = plusXYZ(-other.x, -other.y, -other.z)
 
     fun distanceTo(otherPos: Point3DLong) = (otherPos.x - x).absoluteValue + (otherPos.y - y).absoluteValue + (otherPos.z - z).absoluteValue
 
